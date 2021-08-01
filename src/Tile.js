@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import {Paper, Tooltip} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +16,15 @@ export default function Tile(props) {
   const classes = useStyles();
   const [billboard, setBillboard] = useState('');
   const [tile, setTile] = useState();
+
+  useEffect(() => {
+    if (props.tileValue !== tile) {
+      setTile(props.tileValue);
+    }
+    if (props.billboardValue !== billboard) {
+      setBillboard(props.billboardValue);
+    }
+  }, [props.tileValue, props.billboardValue])
 
   const updateLevel = function() {
     if (props.layer === 'tile') {

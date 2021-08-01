@@ -203,10 +203,10 @@ function App() {
       }
       bRows.push(tempB);
     }
-    setWidth(value[0].length);
-    setHeight(value.length);
     billboards = bRows;
     tiles = value;
+    setWidth(value[0].length);
+    setHeight(value.length);
   }
 
   const updateHeight = function(value) {
@@ -430,7 +430,17 @@ function App() {
                   <Grid  container justifyContent="center" spacing={0} style={{flexWrap: 'noWrap'}}>
                     {row.map((column, j) => (
                       <Grid key={j} item>
-                        <Tile key={i.toString() + j.toString()} x={i} y={j} tile={tile} layer={layer} billboard={billboard} update={(value) => updateLevel(i, j, value)}/>
+                        <Tile 
+                          key={i.toString() + j.toString()}
+                          x={i}
+                          y={j}
+                          tile={tile}
+                          layer={layer}
+                          billboard={billboard} 
+                          tileValue={tiles[i][j]} 
+                          billboardValue={billboards[i][j]} 
+                          update={(value) => updateLevel(i, j, value)}
+                        />
                       </Grid>
                     ))}
                   </Grid>
