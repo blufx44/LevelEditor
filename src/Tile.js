@@ -45,13 +45,25 @@ export default function Tile(props) {
 
   return (
     <Tooltip title={'X- ' + props.x + ' : Y- ' + props.y + ' : Tile- ' + tile + ' : Billboard-' + billboard}>
-      <Paper square className={classes.paper} style={{backgroundColor: lcolors[tile]}} 
-        onDragStart={(e) => {e.preventDefault()}} onClick={() => updateLevel()} 
-        onMouseEnter={(e) => hover(e)} onMouseDown={() => updateLevel()}>
-        {billboard !== '' &&
-          <DetailsIcon style={{display: 'block', fontSize: 'medium'}}/>
-        }
-      </Paper>
+      {(props.textures.length === 0) ?
+        <Paper square className={classes.paper} style={{backgroundColor: lcolors[tile]}} 
+          onDragStart={(e) => {e.preventDefault()}} onClick={() => updateLevel()} 
+          onMouseEnter={(e) => hover(e)} onMouseDown={() => updateLevel()}>
+          {billboard !== '' &&
+            <DetailsIcon style={{display: 'block', fontSize: 'medium'}}/>
+          }
+        </Paper> : 
+        <Paper square className={classes.paper} 
+          onDragStart={(e) => {e.preventDefault()}} onClick={() => updateLevel()} 
+          onMouseEnter={(e) => hover(e)} onMouseDown={() => updateLevel()}>
+          { (tile > 0) &&
+            <img alt="" src={props.textures[tile]}/> 
+          }
+          {billboard !== '' &&
+            <DetailsIcon style={{display: 'block', fontSize: 'medium'}}/>
+          }
+        </Paper>
+      }
     </Tooltip>
   );
 }

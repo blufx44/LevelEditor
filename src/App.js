@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import './App.css';
-import {Button, Grid, MenuItem, Paper, Select, TextField} from '@material-ui/core';
+import {Button, Grid, MenuItem, Select, TextField} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Tile from './Tile';
-import { lcolors } from './colors';
+import { ltextures } from './colors';
+import { getFileObject } from './textureImporter';
+import LevelImport from './menu/LevelImport';
+import TextureImport from './menu/TextureImport';
+import TileKey from './TileKey';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,172 +18,6 @@ const useStyles = makeStyles((theme) => ({
     width: 16,
   },
 }));
-
-const textures = [
-  "enemyturret", 
-  "enemyturretdestroyed", 
-  "enemyturretattack", 
-  "computerdesk", 
-  "pottedplant", 
-  "drywall", 
-  "drywalldoor",
-  "trashcan", 
-  "couch", 
-  "sparks",
-  "defaultScrewDriver", 
-  "attackScrewDriver", 
-  "brick", 
-  "billboards", 
-  "floors", 
-  "enemyshot",
-  "pistolpowerup",
-  "bulletprojectile",
-  "attackPistol",
-  "defaultPistol",
-  "ammopowerup",
-  "healthpowerup",
-  "vent",
-  "cobblestone",
-  "cobblestonetall",
-  "fireaxe",
-  "fireaxeattack",
-  "fireaxepowerup",
-  "bluesparks",
-  "npc_melee_attack",
-  "npc_melee_move",
-  "ar",
-  "arattack",
-  "arreload",
-  "arpowerup",
-  "carpet",
-  "wallpaper",
-  "brickwindow",
-  "ceilingDryWall",
-  "wallpaperdoor",
-  "wallpapervent",
-  "elevatordoors",
-  "pistolreload",
-  "deaddude",
-  "fridge",
-  "comfychair",
-  "tv",
-  "bed",
-  "endtable",
-  "statue",
-  "enemyrangedmove",
-  "enemyrangeddeath",
-  "enemyrangedattack",
-  "streetlamp",
-  "exitsign",
-  "cardboardbox",
-  "bush",
-  "shotgun",
-  "shotgunattack",
-  "shotgunreload",
-  "shotgunpowerup",
-  "shotgunblast",
-  "hellraiser",
-  "hellraiserattack",
-  "hellraiserdeath",
-  "introtoc",
-  "darkblades",
-  "introtocattack",
-  "introtocpowerup",
-  "grass",
-  "sidewalk1",
-  "sidewalk2",
-  "sidewalk3",
-  "sidewalk4",
-  "sidewalk5",
-  "sidewalk6",
-  "sidewalk7",
-  "sidewalk8",
-  "sidewalk9",
-  "sidewalk10",
-  "sidewalk11",
-  "sidewalk12",
-  "sidewalk13",
-  "sidewalk14",
-  "sidewalk15",
-  "sidewalk16",
-  "sidewalk17",
-  "sidewalk18",
-  "concrete1",
-  "concrete2",
-  "concrete3",
-  "concrete4",
-  "concrete5",
-  "concrete6",
-  "concrete7",
-  "concrete8",
-  "concrete9",
-  "concrete10",
-  "concrete11",
-  "concrete12",
-  "concrete13",
-  "crosswalk1",
-  "crosswalk2",
-  "bossroomwall",
-  "bossroomwall1",
-  "bossroomfloor",
-  "bossroomfloor1",
-  "bossroomwallwires",
-  "evilfire",
-  "boss",
-  "bossattack",
-  "bosssecondattack",
-  "bossteleport",
-  "bossroomfloorlit",
-  "bossdeath",
-  "intro_scene1",
-  "intro_scene2",
-  "cleanwhitewall",
-  "blackfloorshiny",
-  "serverrack1",
-  "serverrack2",
-  "cleanwhitewalldoorclosed",
-  "cleanwhitewalldooropen",
-  "bluecarpet",
-  "azurecloudsign",
-  "bossroomdoor",
-  "intro_scene0",
-  "death_cutscene",
-  "endgame_scene0",
-  "endgame_scene1",
-  "endgame_scene2",
-  "endgame_scene3",
-  "endgame_scene4",
-  "elevatorbroken",
-  "wallpapermailboxes",
-  "guardsheddoor",
-  "guardshedwall",
-  "guardshedcorner",
-  "fence",
-  "lockeddoorwallpaper",
-  "brokendoorwallpaper-2",
-  "stairs",
-  "empty",
-  "stairsup",
-  "grasstuft",
-  "bluesiding",
-  "bluesidingwindow",
-  "bluesidingopendoor",
-  "cobblestonetalldooropen",
-  "cobblestonetallblockeddoor",
-  "cobblestonetallwindow",
-  "roadblocktall",
-  "teleport",
-  "car",
-  "fortsign",
-  "apartmentrubble",
-  "os2floppy",
-  "os2floppyattack",
-  "os2floppypowerup",
-  "greenslicesprojectile",
-  "treadmill",
-  "benchpress",
-  "dumbells"
-];
 
 let billboards = [];
 let tiles = [];
@@ -192,6 +30,8 @@ function App() {
   const [tile, setTile] = useState(0);
   const [billboard, setBillboard] = useState('');
   const [update, setUpdate] = useState(false);
+  const [sprites, setSprites] = useState([]);
+  const [textures, setTextures] = useState([]);
 
   const initialize = function(value) {
     let bRows = [];
@@ -293,7 +133,7 @@ function App() {
     }
   }
 
-  const handleImport = function(files) {
+  const importLevel = function(files, type) {
   // files is a FileList of File objects. List some properties.
   var json = '';
 	var output = [];
@@ -305,7 +145,7 @@ function App() {
 			return function (e) {
 				try {
           json = JSON.parse(e.target.result);
-          if (layer === 'tile') {
+          if (type === 'tile') {
             initialize(json);
           }
           else {
@@ -325,6 +165,36 @@ function App() {
 		})(f);
 		reader.readAsText(f);
 	}
+  }
+
+  const importTexture = function(files, type) {
+    // files is a FileList of File objects. List some properties.
+    var json = '';
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      var reader = new FileReader();
+  
+      // Closure to capture the file information.
+      reader.onload = (function (theFile) {
+        return function (e) {
+          try {
+            json = JSON.parse(e.target.result);
+            if (type === 'tile') {
+              for (let file of json) {
+                getFileObject(file);
+              }
+              setTextures(json);
+            }
+            else {
+              setSprites(json);
+            }
+          } catch (ex) {
+            alert('ex when trying to parse json = ' + ex);
+          }
+        }
+      })(f);
+      reader.readAsText(f);
+    }
   }
 
   const generate = function() {
@@ -359,12 +229,12 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{width: '100%'}}>
-        <input
-          type="file"
-          onChange={ (e) => handleImport(e.target.files) }
-        />
-        <Select
+      <div style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+        <LevelImport import={(files, type) => importLevel(files, type)}/>
+        <TextureImport import={(files, type) => importTexture(files, type)}/>
+      </div>
+      <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
+      <Select
           value={layer}
           style={{verticalAlign:'bottom'}}
           onChange={(e) => switchLayer(e)}
@@ -375,55 +245,58 @@ function App() {
           <MenuItem value={'tile'}>Tiles</MenuItem>
           <MenuItem value={'billboard'}>Billboards</MenuItem>
         </Select>  
+      <TextField
+        label="Height"
+        type="number"
+        value={height}
+        onChange={(e) => updateHeight(e.target.value)}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+      <TextField
+        label="Width"
+        type="number"
+        value={width}
+        onChange={(e) => updateWidth(e.target.value)}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+      { layer !== 'billboard' &&
         <TextField
-          label="Height"
+          label="Tile"
           type="number"
-          value={height}
-          onChange={(e) => updateHeight(e.target.value)}
+          value={tile}
+          onChange={(e) => updateTile(e)}
           InputLabelProps={{
             shrink: true,
           }}
         />
-        <TextField
-          label="Width"
-          type="number"
-          value={width}
-          onChange={(e) => updateWidth(e.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        { layer !== 'billboard' &&
-          <TextField
-            label="Tile"
-            type="number"
-            value={tile}
-            onChange={(e) => updateTile(e)}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        }
-        { layer === 'billboard' &&
-          <Select
-            value={billboard}
-            style={{verticalAlign:'bottom'}}
-            onChange={(e) => switchBillboard(e)}
-            displayEmpty
-            className={classes.selectEmpty}
-            inputProps={{ 'aria-label': 'Without label' }}
-          >
-            <MenuItem value={''}>None</MenuItem>
-            {
-              textures.map((texture, i) => (
-                <MenuItem key={i} value={texture}>{texture}</MenuItem>
-              ))
-            }
-          </Select>
-        }
+      }
+      { layer === 'billboard' &&
+        <Select
+          value={billboard}
+          style={{verticalAlign:'bottom'}}
+          onChange={(e) => switchBillboard(e)}
+          displayEmpty
+          className={classes.selectEmpty}
+          inputProps={{ 'aria-label': 'Without label' }}
+        >
+          <MenuItem value={''}>None</MenuItem>
+          {
+            (sprites.length > 0) ? sprites.map((texture, i) => (
+              <MenuItem key={i} value={texture}>{texture}</MenuItem>
+            )) :
+            ltextures.map((texture, i) => (
+              <MenuItem key={i} value={texture}>{texture}</MenuItem>
+            ))
+          }
+        </Select>
+      }
       </div>
       <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-        <div style={{flexDirection: 'column', height: 'fit-content', borderWidth: '2px', borderColor: 'black', borderStyle: 'solid', display: 'grid', overflow: 'auto'}}>
+        <div style={{flexDirection: 'column', height: 'fit-content', borderWidth: '2px', borderColor: 'black', borderStyle: 'solid', display: 'grid', overflow: 'auto', width: '70%'}}>
           { tiles.map((row, i) => (
             <Grid key={i} container spacing={0} >
               <Grid item xs={12} >
@@ -437,6 +310,7 @@ function App() {
                           tile={tile}
                           layer={layer}
                           billboard={billboard} 
+                          textures={textures}
                           tileValue={tiles[i][j]} 
                           billboardValue={billboards[i][j]} 
                           update={(value) => updateLevel(i, j, value)}
@@ -448,10 +322,8 @@ function App() {
             </Grid>
           ))}
         </div>
-        <div style={{display: 'flex', flexDirection: 'column', marginLeft: '20px', height: '80%'}}>
-          { lcolors.map((color, i) => (
-            <Paper style={{backgroundColor: color, color: 'white'}}>{i}</Paper>
-          ))}
+        <div style={{marginLeft: '20px'}}>
+          <TileKey textures={textures}/>
         </div>
       </div>
 
