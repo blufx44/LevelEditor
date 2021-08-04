@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
 import {Paper} from '@material-ui/core';
 import { lcolors } from './colors';
 
+const useStyles = makeStyles((theme) => ({
+  selected: {
+    borderWidth: 2,
+    borderColor: 'black',
+    border: 'dashed'
+  },
+  unselected: {
+    borderWidth: 2,
+    border: 'double'
+  },
+}));
+
 export default function TileKey(props) {
+  const classes = useStyles();
   const [textures, setTextures] = useState([]);
+  const [selected, setSelected] = useState(0);
 
   useEffect(() => {
     let key = props.textures.length === 0 ? 
@@ -28,19 +43,40 @@ export default function TileKey(props) {
     }
 
     setTextures(key);
-  }, [props.textures])
+  }, [props.textures]);
+
+  const handleClick = (value) => {
+    setSelected(value);
+    props.handleClick(value);
+  }
 
   return (
     <div style={{display: 'flex', flexDirection: 'row'}}>
       { textures.map((column, i) => {
           return (
-            <div style={{display: 'flex', flexDirection: 'column'}}>
+            <div style={{display: 'flex', flexDirection: 'column', padding: 2, alignItems: 'center'}}>
               { textures[i].map((row, j) => {
                 if (props.textures.length === 0) {
-                  return (<Paper style={{marginLeft: '5px', width:'30px', backgroundColor: textures[i][j], color: 'white'}}>{((i-1)*20)+j}</Paper>);
+                  return (
+                    <Paper 
+                      className={selected === (((i-1)*20)+j) ? classes.selected : classes.unselected} 
+                      onClick={() => handleClick(((i-1)*20)+j)} 
+                      style={{width:'30px', backgroundColor: textures[i][j], color: 'white'}}
+                    >
+                      {((i-1)*20)+j}
+                    </Paper>
+                  );
                 }
                 else {
-                  return (<Paper><img alt="i" src={textures[i][j]}/></Paper>);
+                  return (
+                  <Paper 
+                    className={selected === (((i-1)*20)+j) ? classes.selected : classes.unselected} 
+                    onClick={() => handleClick(((i-1)*20)+j)}
+                  >
+                    <img alt="i" src={textures[i][j]}/>
+                    {((i-1)*20)+j}
+                  </Paper>
+                  );
                 }
               }) 
               }

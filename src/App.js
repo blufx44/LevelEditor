@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import {Button, Grid, MenuItem, Select, TextField} from '@material-ui/core';
+import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Tile from './Tile';
 import { ltextures } from './colors';
@@ -110,10 +110,6 @@ function App() {
     tiles = temp;
     billboards = tempB;
     setWidth(value);
-  }
-
-  const updateTile = function(e) {
-    setTile(e.target.value);
   }
 
   const switchLayer = function(e) {
@@ -234,7 +230,9 @@ function App() {
         <TextureImport import={(files, type) => importTexture(files, type)}/>
       </div>
       <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
-      <Select
+      <FormControl>
+        <InputLabel>Editor</InputLabel>
+        <Select
           value={layer}
           style={{verticalAlign:'bottom'}}
           onChange={(e) => switchLayer(e)}
@@ -242,9 +240,11 @@ function App() {
           className={classes.selectEmpty}
           inputProps={{ 'aria-label': 'Without label' }}
         >
+
           <MenuItem value={'tile'}>Tiles</MenuItem>
           <MenuItem value={'billboard'}>Billboards</MenuItem>
-        </Select>  
+        </Select> 
+      </FormControl>
       <TextField
         label="Height"
         type="number"
@@ -263,37 +263,6 @@ function App() {
           shrink: true,
         }}
       />
-      { layer !== 'billboard' &&
-        <TextField
-          label="Tile"
-          type="number"
-          value={tile}
-          onChange={(e) => updateTile(e)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-      }
-      { layer === 'billboard' &&
-        <Select
-          value={billboard}
-          style={{verticalAlign:'bottom'}}
-          onChange={(e) => switchBillboard(e)}
-          displayEmpty
-          className={classes.selectEmpty}
-          inputProps={{ 'aria-label': 'Without label' }}
-        >
-          <MenuItem value={''}>None</MenuItem>
-          {
-            (sprites.length > 0) ? sprites.map((texture, i) => (
-              <MenuItem key={i} value={texture}>{texture}</MenuItem>
-            )) :
-            ltextures.map((texture, i) => (
-              <MenuItem key={i} value={texture}>{texture}</MenuItem>
-            ))
-          }
-        </Select>
-      }
       </div>
       <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
         <div style={{flexDirection: 'column', height: 'fit-content', borderWidth: '2px', borderColor: 'black', borderStyle: 'solid', display: 'grid', overflow: 'auto', width: '70%'}}>
@@ -322,8 +291,32 @@ function App() {
             </Grid>
           ))}
         </div>
-        <div style={{marginLeft: '20px'}}>
-          <TileKey textures={textures}/>
+        <div style={{marginLeft: '20px', display: 'flex', flexDirection: 'column'}}>
+          <FormControl>
+          <InputLabel>Billboards</InputLabel>
+            <Select
+              value={billboard}
+              style={{verticalAlign:'bottom'}}
+              onChange={(e) => switchBillboard(e)}
+              displayEmpty
+              className={classes.selectEmpty}
+              inputProps={{ 'aria-label': 'Without label' }}
+            >
+              <MenuItem value={''}>None</MenuItem>
+              {
+                (sprites.length > 0) ? sprites.map((texture, i) => (
+                  <MenuItem key={i} value={texture}>{texture}</MenuItem>
+                )) :
+                ltextures.map((texture, i) => (
+                  <MenuItem key={i} value={texture}>{texture}</MenuItem>
+                ))
+              }
+            </Select>
+          </FormControl>
+          <FormControl style={{paddingTop: '40px'}}>
+            <InputLabel>Tiles</InputLabel>
+            <TileKey textures={textures} handleClick={(e) => setTile(e)}/>
+          </FormControl>
         </div>
       </div>
 
