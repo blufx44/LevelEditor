@@ -9,7 +9,8 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: 16,
     width: 16,
-    display: 'block'
+    display: 'block',
+    position: 'relative'
   },
 }));
 
@@ -48,9 +49,9 @@ export default function Tile(props) {
     <Tooltip title={
       'X- ' + props.x + 
       ' : Y- ' + props.y + 
-      ' : Tile- ' + tile + (props.textures.length === 0 ? '' : '-' + props.textures[tile].name) + 
+      ' : Tile- ' + tile + (props.textures.length === 0 ? '' : '-' + props.textures[tile]?.name) + 
       ' : Billboard-' + billboard}>
-      {(props.textures.length === 0) ?
+      {(props.textures.length === 0 || !props.textures[tile]?.image) ?
         <Paper square className={classes.paper} style={{backgroundColor: lcolors[tile]}} 
           onDragStart={(e) => {e.preventDefault()}} onClick={() => updateLevel()} 
           onMouseEnter={(e) => hover(e)} onMouseDown={() => updateLevel()}>
