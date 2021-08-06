@@ -34,7 +34,7 @@ export default function LevelImport(props) {
       >
       Level Import
       </Button>
-      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+      <Popper style={{zIndex: 1}} open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
