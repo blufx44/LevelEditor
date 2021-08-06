@@ -167,7 +167,6 @@ function App() {
   const importTexture = async function(files, type) {
     // files is a FileList of File objects. List some properties.
     var json = '';
-    var output = [];
     if (type === 'tile') {
       let images = [];
       await JSZip.loadAsync(files[0], "STORE").then(async function(zip) {
@@ -183,22 +182,22 @@ function App() {
             alert('ex when trying to parse json = ' + ex);
           }
         }
-        zip.forEach(function (relativePath, zipEntry) {  // 2) print entries
-          if (!relativePath.endsWith('.json')){
-            let y = zipEntry._data.compressedContent;
+        for (const file of Object.entries(zip.files)) {
+          let content = await file[1].async('nodebuffer');
+          if (!file[0].endsWith('.json')){
             let x = new Image();
-            x.src = URL.createObjectURL( new Blob([y], { type: 'image/png' } /* (1) */));
+            x.src = URL.createObjectURL( new Blob([content], { type: 'image/png' }));
             if(meta){
-              let i = json.indexOf(relativePath);
+              let i = json.indexOf(file[0]);
               if (i >= 0){
-                images[i] = {image: x, name: relativePath};
+                images[i] = {image: x, name: file[0]};
               }
             }
             else{
-              images.push({image: x, name: relativePath});
+              images.push({image: x, name: file[0]});
             }
           }
-        });
+        }
         textures.forEach(image => {
           URL.revokeObjectURL(image.src);
         });

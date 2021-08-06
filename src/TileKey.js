@@ -56,12 +56,12 @@ export default function TileKey(props) {
           return (
             <div style={{display: 'flex', flexDirection: 'column', padding: 2, alignItems: 'center'}}>
               { textures[i].map((row, j) => {
-                if (props.textures.length === 0) {
+                if (props.textures.length === 0 || !textures[i][j]) {
                   return (
                     <Paper 
                       className={selected === (((i-1)*20)+j) ? classes.selected : classes.unselected} 
                       onClick={() => handleClick(((i-1)*20)+j)} 
-                      style={{width:'30px', backgroundColor: textures[i][j], color: 'white'}}
+                      style={{width:'30px', backgroundColor: lcolors[((i-1)*20)+j], color: 'white'}}
                     >
                       {((i-1)*20)+j}
                     </Paper>
