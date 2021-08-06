@@ -9,13 +9,14 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     height: 16,
     width: 16,
+    display: 'block'
   },
 }));
 
 export default function Tile(props) {
   const classes = useStyles();
   const [billboard, setBillboard] = useState('');
-  const [tile, setTile] = useState();
+  const [tile, setTile] = useState(0);
 
   useEffect(() => {
     if (props.tileValue !== tile) {
@@ -44,7 +45,11 @@ export default function Tile(props) {
   }
 
   return (
-    <Tooltip title={'X- ' + props.x + ' : Y- ' + props.y + ' : Tile- ' + tile + ' : Billboard-' + billboard}>
+    <Tooltip title={
+      'X- ' + props.x + 
+      ' : Y- ' + props.y + 
+      ' : Tile- ' + tile + (props.textures.length === 0 ? '' : '-' + props.textures[tile].name) + 
+      ' : Billboard-' + billboard}>
       {(props.textures.length === 0) ?
         <Paper square className={classes.paper} style={{backgroundColor: lcolors[tile]}} 
           onDragStart={(e) => {e.preventDefault()}} onClick={() => updateLevel()} 
@@ -56,11 +61,11 @@ export default function Tile(props) {
         <Paper square className={classes.paper} 
           onDragStart={(e) => {e.preventDefault()}} onClick={() => updateLevel()} 
           onMouseEnter={(e) => hover(e)} onMouseDown={() => updateLevel()}>
-          { (tile > 0) &&
-            <img alt="" src={props.textures[tile]}/> 
+          { (tile >= 0) &&
+            <img alt="" src={props.textures[tile].image.src} style={{width: 16, height: 16, display: "block", position: "absolute"}}/> 
           }
           {billboard !== '' &&
-            <DetailsIcon style={{display: 'block', fontSize: 'medium'}}/>
+            <DetailsIcon style={{display: 'block', fontSize: 'medium', position: "absolute"}}/>
           }
         </Paper>
       }

@@ -4,10 +4,11 @@ import {Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField} from
 import { makeStyles } from '@material-ui/core/styles';
 import Tile from './Tile';
 import { ltextures } from './colors';
-import { getFileObject } from './textureImporter';
+import JSZip from 'jszip';
 import LevelImport from './menu/LevelImport';
 import TextureImport from './menu/TextureImport';
 import TileKey from './TileKey';
+import fs from 'fs';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -163,33 +164,66 @@ function App() {
 	}
   }
 
-  const importTexture = function(files, type) {
+  const importTexture = async function(files, type) {
     // files is a FileList of File objects. List some properties.
     var json = '';
     var output = [];
-    for (var i = 0, f; f = files[i]; i++) {
-      var reader = new FileReader();
-  
-      // Closure to capture the file information.
-      reader.onload = (function (theFile) {
-        return function (e) {
+    if (type === 'tile') {
+      let images = [];
+      await JSZip.loadAsync(files[0], "STORE").then(async function(zip) {
+        let meta  = Object.keys(zip.files).find(x => x.endsWith('.json'));
+        if (meta) {
           try {
-            json = JSON.parse(e.target.result);
-            if (type === 'tile') {
-              for (let file of json) {
-                getFileObject(file);
-              }
-              setTextures(json);
-            }
-            else {
-              setSprites(json);
-            }
+            await zip.file(meta).async('nodebuffer').then(function(content) {
+              let str = String.fromCharCode.apply(null, content)
+              json = JSON.parse(str);
+              images = new Array(json.length);  
+            });
           } catch (ex) {
             alert('ex when trying to parse json = ' + ex);
           }
         }
-      })(f);
-      reader.readAsText(f);
+        zip.forEach(function (relativePath, zipEntry) {  // 2) print entries
+          if (!relativePath.endsWith('.json')){
+            let y = zipEntry._data.compressedContent;
+            let x = new Image();
+            x.src = URL.createObjectURL( new Blob([y], { type: 'image/png' } /* (1) */));
+            if(meta){
+              let i = json.indexOf(relativePath);
+              if (i >= 0){
+                images[i] = {image: x, name: relativePath};
+              }
+            }
+            else{
+              images.push({image: x, name: relativePath});
+            }
+          }
+        });
+        textures.forEach(image => {
+          URL.revokeObjectURL(image.src);
+        });
+        setTextures(images);
+      }, function (e) {
+
+      });
+    }
+    else {
+      for (var i = 0, f; f = files[i]; i++) {
+        var reader = new FileReader();
+    
+        // Closure to capture the file information.
+        reader.onload = (function (theFile) {
+          return function (e) {
+            try {
+              json = JSON.parse(e.target.result);
+              setSprites(json);
+            } catch (ex) {
+              alert('ex when trying to parse json = ' + ex);
+            }
+          }
+        })(f);
+        reader.readAsText(f);
+      }
     }
   }
 
@@ -293,14 +327,13 @@ function App() {
         </div>
         <div style={{marginLeft: '20px', display: 'flex', flexDirection: 'column'}}>
           <FormControl>
-          <InputLabel>Billboards</InputLabel>
-            <Select
+            <InputLabel>Billboards</InputLabel>
+            <Select displayEmpty
               value={billboard}
               style={{verticalAlign:'bottom'}}
               onChange={(e) => switchBillboard(e)}
-              displayEmpty
+              
               className={classes.selectEmpty}
-              inputProps={{ 'aria-label': 'Without label' }}
             >
               <MenuItem value={''}>None</MenuItem>
               {

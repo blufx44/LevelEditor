@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
-import {Paper} from '@material-ui/core';
+import {Paper, Tooltip} from '@material-ui/core';
 import { lcolors } from './colors';
 
 const useStyles = makeStyles((theme) => ({
@@ -69,13 +69,14 @@ export default function TileKey(props) {
                 }
                 else {
                   return (
-                  <Paper 
-                    className={selected === (((i-1)*20)+j) ? classes.selected : classes.unselected} 
-                    onClick={() => handleClick(((i-1)*20)+j)}
-                  >
-                    <img alt="i" src={textures[i][j]}/>
-                    {((i-1)*20)+j}
-                  </Paper>
+                    <Tooltip title={((i-1)*20)+j+ ': ' + textures[i][j].name}>
+                      <Paper 
+                        className={selected === (((i-1)*20)+j) ? classes.selected : classes.unselected} 
+                        onClick={() => handleClick(((i-1)*20)+j)}
+                      >
+                        <img alt="" src={textures[i][j].image?.src} style={{display: "block"}}/>
+                      </Paper>
+                    </Tooltip>
                   );
                 }
               }) 
