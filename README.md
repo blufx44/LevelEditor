@@ -28,10 +28,39 @@ code blocks for commands
 ```
 
 ### Importing existing Maps and Sprites
+
 * Step-by-step bullets
 
 ### Importing custom textures
-* Step-by-step bullets
+
+#### Importing Tiles
+
+In order to import level tiles into the level editor, select the 'Tile' option under the Import Textures menu.
+The import feature accepts a zip file containing image files.
+
+The images will be loading into the level editor in an alphabetical order unless a meta file is included in the imported zip.
+The order of the tiles can be dictated by an optional json file. 
+
+Below is an example of the required json file format:
+```
+[
+  "image1.png",
+  "image2.png
+]
+``` 
+
+#### Importing Sprites/Billboards
+
+In order to import sprites/billboards into the level editor, select the 'Sprite' option under the Import Textures menu.
+The import feature accepts a json file.
+
+Below is an example of the required json file format:
+```
+[
+  "sprite1",
+  "sprite2"
+]
+``` 
 
 ### Editing a Level
 * Step-by-step bullets

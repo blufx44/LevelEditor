@@ -45,11 +45,11 @@ export default function TextureImport(props) {
                 <MenuList autoFocusItem={open}>
                   <MenuItem>
                     <label htmlFor='tile' style={{width: '100%'}}>Tile</label>
-                    <input style={{display: 'none', width: '100%'}} id='tile' type="file" onChange={ (e) => handleClose(e, 'tile') }/>
+                    <input accept=".zip" style={{display: 'none', width: '100%'}} id='tile' type="file" onChange={ (e) => handleClose(e, 'tile') }/>
                   </MenuItem>
                   <MenuItem>
                     <label htmlFor='sprite' style={{width: '100%'}}>Sprites</label>
-                    <input style={{display: 'none', width: '100%'}} id='sprite' type="file" onChange={ (e) => handleClose(e, 'sprite') }/>
+                    <input accept=".json" style={{display: 'none', width: '100%'}} id='sprite' type="file" onChange={ (e) => handleClose(e, 'sprite') }/>
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>
