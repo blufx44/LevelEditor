@@ -37,7 +37,7 @@ Below is an example of the required json file format:
 ```
 [
   [1,1,2,1,4,5,1,2,7,10],
-  [3,3,1,2,6,5,1,3,7,10],
+  [3,3,1,2,6,5,1,3,7,10]
 ]
 ``` 
 Note: The numbers in the json file are used to map to a texture.
@@ -51,7 +51,7 @@ Below is an example of the required json file format:
 ```
 [
   {"type":"sprite1","x":19,"y":67},
-  {"type":"sprite2","x":32.8,"y":44.3},
+  {"type":"sprite2","x":32.8,"y":44.3}
 ]
 ```
 Note: The x and y locations will be truncated so that they are an integer.
