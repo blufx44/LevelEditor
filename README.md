@@ -27,9 +27,34 @@ After the game jam was completed, several enhancements were made to increase per
 code blocks for commands
 ```
 
-### Importing existing Maps and Sprites
+### Importing Existing Level
 
-* Step-by-step bullets
+#### Importing Level Map
+In order to import an existing level map into the level editor, select the 'Tile' option under the Import Level menu.
+The import feature accepts a json file. 
+
+Below is an example of the required json file format:
+```
+[
+  [1,1,2,1,4,5,1,2,7,10],
+  [3,3,1,2,6,5,1,3,7,10],
+]
+``` 
+Note: The numbers in the json file are used to map to a texture.
+
+#### Importing Level Sprites/Billboards
+
+In order to import an existing level sprites/billboards into the level editor, select the 'Sprite' option under the Import Level menu.
+The import feature accepts a json file.
+
+Below is an example of the required json file format:
+```
+[
+  {"type":"sprite1","x":19,"y":67},
+  {"type":"sprite2","x":32.8,"y":44.3},
+]
+```
+Note: The x and y locations will be truncated so that they are an integer.
 
 ### Importing custom textures
 
